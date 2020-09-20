@@ -11,10 +11,12 @@ fn main() {
         socktype: SockType::Stream.into(),
         ..AddrInfoHints::default()
     };
-    let sockets = getaddrinfo(Some(hostname), Some(servname), Some(hints))
-        .unwrap()
-        .collect::<std::io::Result<Vec<_>>>()
-        .unwrap();
+    let res = getaddrinfo(Some(hostname), Some(servname), Some(hints));
+    let res = match res {
+        Ok(res) => res,
+        Err(_error) => panic!("Problem getting address info Hostname or Service incorrect"),
+    };
+    let sockets = res.collect::<std::io::Result<Vec<_>>>().unwrap();
     print!("IP Addresses: ");
     let sockraddr: Vec<String> = sockets
         .into_iter()
